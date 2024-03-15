@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28.3)
+cmake_minimum_required(VERSION 3.29.6)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/prelude.cmake)
 

@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < adapters.size(); i++) {
         std::cout << "[" << i << "] " << adapters[i]->identifier() << " [" << adapters[i]->address() << "]"
                   << std::endl;
-        macid.push_back(adapters[i]->address());
+        // macid.push_back(adapters[i]->address());
     }
 
 
@@ -57,8 +57,9 @@ int main(int argc, char* argv[]) {
     filter.Transport = SimpleBluez::Adapter::DiscoveryFilter::TransportType::LE;
     adapter->discovery_filter(filter);
 
-    adapter->set_on_device_updated([](std::shared_ptr<SimpleBluez::Device> device) {
+    adapter->set_on_device_updated([&](std::shared_ptr<SimpleBluez::Device> device) {
         std::cout << "Update received for " << device->address() << std::endl;
+        macid.push_back(device->address());
         std::cout << "\tName " << device->name() << std::endl;
         std::cout << "\tAddress Type " << device->address_type() << std::endl;
         std::cout << "\tRSSI " << std::dec << device->rssi() << std::endl;
@@ -72,6 +73,7 @@ int main(int argc, char* argv[]) {
             }
             std::cout << std::endl;
         }
+        
     });
 
     adapter->discovery_start();
