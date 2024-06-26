@@ -1,5 +1,5 @@
 #include <simplebluez/Bluez.h>
-
+#include "nlohmann/json.hpp"
 #include <atomic>
 #include <chrono>
 #include <cstdlib>
@@ -10,7 +10,7 @@
 #include <fstream>
 #include <string>
 
-
+using json = nlohmann::json;
 SimpleBluez::Bluez bluez;
 
 std::atomic_bool async_thread_active = true;
@@ -43,13 +43,13 @@ int main(int argc, char* argv[]) {
     }
 
 
-    std::cout << "Please select an adapter to scan: ";
-    std::cin >> selection;
-    if (selection < 0 || selection >= adapters.size()) {
-        std::cout << "Invalid selection" << std::endl;
-        return 1;
-    }
-
+    // std::cout << "Please select an adapter to scan: ";
+    // std::cin >> selection;
+    // if (selection < 0 || selection >= adapters.size()) {
+    //     std::cout << "Invalid selection" << std::endl;
+    //     return 1;
+    // }
+    selection = 0;
     auto adapter = adapters[selection];
     std::cout << "Scanning " << adapter->identifier() << " [" << adapter->address() << "]" << std::endl;
 
@@ -90,9 +90,65 @@ int main(int argc, char* argv[]) {
     async_thread->join();
     delete async_thread;
 
-    std::ofstream outFile("my_file.txt");
+    std::ofstream outFile("macids.txt");
     // the important part
     for (const auto &e : macid) outFile << e << "\n";
+
+    time_t timestamp;
+    time(&timestamp);
+    // std::cout << ctime(&timestamp);
+
+    json j;
+    j["time"] = ctime(&timestamp).strip();
+    j["health"] = "I am fine";
+    j["age"] = 36;
+
+    std::cout << j << std::endl;
+
+
+// For conncting to specified BLE
+    // if (selection >= 0 && selection < peripherals.size()) {
+    //     auto peripheral = peripherals[selection];
+    //     std::cout << "Connecting to " << peripheral->name() << " [" << peripheral->address() << "]" << std::endl;
+
+    //     for (int attempt = 0; attempt < 3; attempt++) {
+    //         try {
+    //             peripheral->connect();
+    //         } catch (SimpleDBus::Exception::SendFailed& e) {
+    //             millisecond_delay(100);
+    //         }
+    //     }
+
+    //     if (!peripheral->connected() || !peripheral->services_resolved()) {
+    //         std::cout << "Failed to connect to " << peripheral->name() << " [" << peripheral->address() << "]"
+    //                   << std::endl;
+    //         return 1;
+    //     }
+
+    //     std::cout << "Successfully connected, testing NUS service." << std::endl;
+
+    //     auto characteristic_rx = peripheral->get_characteristic("6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+    //                                                             "6e400002-b5a3-f393-e0a9-e50e24dcca9e");
+
+    //     characteristic_rx->write_command("Hello World");
+
+    //     auto characteristic_tx = peripheral->get_characteristic("6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+    //                                                             "6e400003-b5a3-f393-e0a9-e50e24dcca9e");
+
+    //     characteristic_tx->set_on_value_changed([&](SimpleBluez::ByteArray new_value) { print_byte_array(new_value); });
+
+    //     characteristic_tx->start_notify();
+    //     millisecond_delay(3000);
+    //     characteristic_tx->stop_notify();
+    //     millisecond_delay(1000);
+
+    //     peripheral->disconnect();
+
+    //     // Sleep for an additional second before returning.
+    //     // If there are any unexpected events, this example will help debug them.
+    //     millisecond_delay(1000);
+    // }
+
 
     return 0;
 }
