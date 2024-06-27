@@ -78,7 +78,9 @@ int main(int argc, char* argv[]) {
 
     adapter->discovery_start();
     millisecond_delay(3000);
+    std::cout << "Ble scanning start" << std::endl;
     adapter->discovery_stop();
+    std::cout << "Ble scanning stopped" << std::endl;
 
     // Sleep for a bit to allow the adapter to stop discovering.
     millisecond_delay(4000);
@@ -96,10 +98,11 @@ int main(int argc, char* argv[]) {
 
     time_t timestamp;
     time(&timestamp);
-    // std::cout << ctime(&timestamp);
+    // std::cout<< ctime(&timestamp) << std::endl;
 
+    
     json j;
-    j["time"] = ctime(&timestamp).strip();
+    j["time"] = ctime(&timestamp);
     j["health"] = "I am fine";
     j["age"] = 36;
 
@@ -150,5 +153,5 @@ int main(int argc, char* argv[]) {
     // }
 
 
-    return 0;
+    // return 0;
 }
